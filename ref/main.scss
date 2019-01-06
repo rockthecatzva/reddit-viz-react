@@ -1,0 +1,57 @@
+
+
+li {
+    float: left;
+    border: solid 1px #000;
+    padding: 5px;
+}
+
+ul {
+    list-style-type: none;
+    width: 271px;
+    margin: auto auto
+}
+
+.active{
+    color: red;
+}
+.notactive{
+    color: grey;
+}
+
+svg{
+    border: solid 1px #000;
+}
+
+.bubble{
+    fill: #B8B8B8;
+    cursor: pointer;
+}
+
+.bubble-selected{
+    fill: #66ff66;
+}
+
+.tool-tip{
+    border: solid 1px #000;
+    background-color: white;
+    border-radius: 3px;
+    width: 300px;
+}
+
+.svg-container{
+    clear: both;
+}
+
+.axis-line{
+    stroke: #000;
+}
+
+.tick-mark{
+    stroke: #f0f;
+}
+
+.tick-text{
+    font-size: 0.9em;
+    text-anchor: middle;
+}
