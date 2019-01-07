@@ -2,26 +2,33 @@ import React, { Component } from "react";
 
 import SelectableList from "./components/SelectableList";
 import ListButton from "./components/ListButton";
-import { select, selectAll } from "d3-selection";
-import ReactD3Wrapper from "./ReactD3Wrapper";
-const axios = require("axios");
+// import { select, selectAll } from "d3-selection";
+// import ReactD3Wrapper from "./ReactD3Wrapper";
+import axios from "axios";
+import BubbleChart from "./components/BubbleChart";
 
 class App extends Component {
   state = {
     postCount: 5,
     timePeriod: "year",
     lastPostCount: 0,
-    showUpdateButton: false,
-    posts: [],
-    selectedBubble: "",
-    subs: ["politics", "worldnews", "gaming", "movies", "technology", "science"]
+    posts: {
+      politics: [],
+      worldnews: [],
+      gaming: [],
+      movies: [],
+      technology: [],
+      science: []
+    },
+    selectedBubble: ""
+    // subs: ["politics", "worldnews", "gaming", "movies", "technology", "science"]
   };
 
   callAPI() {
-    let d = this.state.subs.map(s => {
+    let d = Object.keys(this.state.posts).map(s => {
       return axios
         .get(
-          "http://rockthecatzva.com/reddit-apibounce-php/public/" +
+          "http://rockthecatzva.com/reddit-apibounce-php/public/posts/top/" +
             s +
             "/" +
             this.state.timePeriod +
@@ -29,7 +36,6 @@ class App extends Component {
             this.state.postCount
         )
         .then(resp => {
-          //console.log(resp.data);
           return resp.data.map(ob => {
             return {
               url: ob.data["url"],
@@ -48,14 +54,21 @@ class App extends Component {
           });
         })
         .catch(err => {
-          console.log("error");
+          console.log("errror");
         });
     });
 
     Promise.all(d).then(f => {
-      console.log("done");
-      const postArray = f.reduce((acc, curr) => [...curr, ...acc]);
-      this.setState({ posts: postArray, lastPostCount: this.state.postCount });
+      const labels = f.map(s=>s[0].sub);
+      console.log(labels)
+
+      const posts = [...f].reduce((curr, acc, i) => {
+        console.log(curr)
+        
+        return { ...{[labels[i]]: curr}, ...acc };
+      }, {});
+      console.log(posts);
+      this.setState({ posts, lastPostCount: this.state.postCount });
     });
   }
 
@@ -103,30 +116,31 @@ class App extends Component {
               -
             </li>
           </ul>
-          {this.state.showUpdateButton && (
-            <div
-              className="updateButton"
-              onClick={() => {
-                console.log("here");
-                // this.callAPI();
-              }}
-            >
-              Update
-            </div>
-          )}
+
+          <div
+            className="updateButton"
+            onClick={() => {
+              console.log("here");
+              this.callAPI();
+            }}
+          >
+            Update
+          </div>
         </div>
         <h4>Top Reddot Posts in Past {0}</h4>
         <div className="svg-container">
-          {/* {this.state.posts.length && (
+          <div className="sub">
+            <h3>r/politics}</h3>
             <BubbleChart
               width={700}
               height={500}
               selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts}
-              labels={this.state.subs}
-              clickHandler={this.bubbleClick}
+              bubbleData={this.state.posts["politics"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
             />
-          )} */}
+          </div>
         </div>
       </div>
     );

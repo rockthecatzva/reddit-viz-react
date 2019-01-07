@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { scaleVal, findRange, getMonthName } from '../DrawingUtils'
+import { scaleVal, findRange, getMonthName } from './DrawingUtils'
 import ToolTip from './ToolTip'
-
 //const d3 = require('d3');
 
 export default class BubbleChart extends Component {

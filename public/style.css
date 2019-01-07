@@ -30,3 +30,14 @@ ul {
 .notactive{
     color: grey;
 }
+
+.sub{
+    height: 100px;
+    width: 100%;
+    border: solid 1px black;
+    margin: 10px;
+}
+
+.sub h3{
+    margin: 10px;
+}
