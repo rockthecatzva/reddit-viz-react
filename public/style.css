@@ -32,12 +32,18 @@ ul {
 }
 
 .sub{
-    height: 100px;
-    width: 100%;
+    height: 600px;
+    width: 80%;
     border: solid 1px black;
     margin: 10px;
 }
 
 .sub h3{
     margin: 10px;
+}
+
+svg{
+    width: 800px;
+    height: 500px;
+    border: solid 1px black;
 }

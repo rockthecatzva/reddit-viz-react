@@ -9,8 +9,8 @@ import BubbleChart from "./components/BubbleChart";
 
 class App extends Component {
   state = {
-    postCount: 5,
-    timePeriod: "year",
+    postCount: 25,
+    timePeriod: 3,
     lastPostCount: 0,
     posts: {
       politics: [],
@@ -59,13 +59,13 @@ class App extends Component {
     });
 
     Promise.all(d).then(f => {
-      const labels = f.map(s=>s[0].sub);
-      console.log(labels)
+      const labels = f.map(s => s[0].sub);
+      console.log(labels);
 
-      const posts = [...f].reduce((curr, acc, i) => {
-        console.log(curr)
-        
-        return { ...{[labels[i]]: curr}, ...acc };
+      const posts = [...f].reduce((acc, curr, i) => {
+        console.log(curr);
+
+        return { [labels[i]]: curr, ...acc };
       }, {});
       console.log(posts);
       this.setState({ posts, lastPostCount: this.state.postCount });
@@ -84,8 +84,9 @@ class App extends Component {
           </p>
           <p>1. Select a timeperiod.</p>
           <SelectableList
-            onSelect={() => {
-              console.log("Select");
+            startIndex={"Month"}
+            onSelect={timePeriod => {
+              console.log("Select", timePeriod);
             }}
           >
             <ListButton>Hour</ListButton>
@@ -120,7 +121,6 @@ class App extends Component {
           <div
             className="updateButton"
             onClick={() => {
-              console.log("here");
               this.callAPI();
             }}
           >
@@ -128,7 +128,7 @@ class App extends Component {
           </div>
         </div>
         <h4>Top Reddot Posts in Past {0}</h4>
-        <div className="svg-container">
+        <div className="viz-container">
           <div className="sub">
             <h3>r/politics}</h3>
             <BubbleChart
@@ -141,6 +141,67 @@ class App extends Component {
               }}
             />
           </div>
+          <div className="sub">
+            <h3>r/worldnews}</h3>
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["worldnews"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+          </div>
+          <div className="sub">
+            <h3>r/gaming}</h3>
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["gaming"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+          </div>
+          <div className="sub">
+            <h3>r/movies}</h3>
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["movies"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+          </div>
+          <div className="sub">
+            <h3>r/technology}</h3>
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["technology"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+          </div>
+          <div className="sub">
+            <h3>r/science}</h3>
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["science"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+          </div>
+
         </div>
       </div>
     );

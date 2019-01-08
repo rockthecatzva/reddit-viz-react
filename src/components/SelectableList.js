@@ -3,20 +3,20 @@ import React, { Component } from "react";
 //does this need classs
 export default class SelectableList extends Component {
   state = {
-    activeIndex: 0
+    activeIndex: this.props.startIndex
   };
 
   onSelect = activeIndex => {
     this.setState({ activeIndex });
-    this.props.onSelect(activeIndex)
+    this.props.onSelect(activeIndex);
   };
 
   render() {
     const children = React.Children.map(this.props.children, (child, index) => {
       return React.cloneElement(child, {
-        isActive: index === this.state.activeIndex,
+        isActive: child.props.children === this.state.activeIndex,
         onSelect: () => {
-          this.onSelect(index);
+          this.onSelect(child.props.children);
         }
       });
     });
