@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { scaleVal, findRange, getMonthName } from "./DrawingUtils";
 import ToolTip from "./ToolTip";
 import { select, selectAll } from "d3-selection";
 import { axisBottom as d3AxisBottom } from "d3-axis";
@@ -44,7 +43,7 @@ export default class BubbleChart extends Component {
 
       const dates = bubbleData
         .map(b => {
-          console.log(b);
+          // console.log(b);
           return new Date(b.date);
         })
         .sort((a, b) => {

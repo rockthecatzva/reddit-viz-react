@@ -34,8 +34,8 @@ ul {
 .sub{
     height: 600px;
     width: 80%;
-    border: solid 1px black;
     margin: 10px;
+    position: relative;
 }
 
 .sub h3{
@@ -43,7 +43,47 @@ ul {
 }
 
 svg{
+    display: block;
     width: 800px;
     height: 500px;
-    border: solid 1px black;
+    margin: auto;
 }
+
+.spinner {
+    display: inline-block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    left: 50%;
+    bottom: 50%;
+  }
+  .spinner div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 51px;
+    height: 51px;
+    margin: 6px;
+    border: 6px solid #f00;
+    border-radius: 50%;
+    animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #f00 transparent transparent transparent;
+  }
+  .spinner div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .spinner div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .spinner div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  

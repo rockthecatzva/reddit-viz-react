@@ -9,9 +9,10 @@ import BubbleChart from "./components/BubbleChart";
 
 class App extends Component {
   state = {
-    postCount: 25,
+    postCount: 50,
     timePeriod: 3,
     lastPostCount: 0,
+    showSpinner: true,
     posts: {
       politics: [],
       worldnews: [],
@@ -24,7 +25,12 @@ class App extends Component {
     // subs: ["politics", "worldnews", "gaming", "movies", "technology", "science"]
   };
 
+  componentDidMount(){
+    this.callAPI();
+  }
+
   callAPI() {
+    this.setState({showSpinner: true});
     let d = Object.keys(this.state.posts).map(s => {
       return axios
         .get(
@@ -60,15 +66,11 @@ class App extends Component {
 
     Promise.all(d).then(f => {
       const labels = f.map(s => s[0].sub);
-      console.log(labels);
 
       const posts = [...f].reduce((acc, curr, i) => {
-        console.log(curr);
-
         return { [labels[i]]: curr, ...acc };
       }, {});
-      console.log(posts);
-      this.setState({ posts, lastPostCount: this.state.postCount });
+      this.setState({ posts, lastPostCount: this.state.postCount, showSpinner: false });
     });
   }
 
@@ -140,6 +142,7 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
+            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
           </div>
           <div className="sub">
             <h3>r/worldnews}</h3>
@@ -152,6 +155,7 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
+            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
           </div>
           <div className="sub">
             <h3>r/gaming}</h3>
@@ -164,6 +168,7 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
+            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
           </div>
           <div className="sub">
             <h3>r/movies}</h3>
@@ -176,6 +181,7 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
+            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
           </div>
           <div className="sub">
             <h3>r/technology}</h3>
@@ -188,6 +194,7 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
+            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
           </div>
           <div className="sub">
             <h3>r/science}</h3>
@@ -200,6 +207,7 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
+            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
           </div>
 
         </div>
