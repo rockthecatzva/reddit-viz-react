@@ -10,7 +10,7 @@ import BubbleChart from "./components/BubbleChart";
 class App extends Component {
   state = {
     postCount: 50,
-    timePeriod: 3,
+    timePeriod: "month",
     lastPostCount: 0,
     showSpinner: true,
     posts: {
@@ -25,12 +25,12 @@ class App extends Component {
     // subs: ["politics", "worldnews", "gaming", "movies", "technology", "science"]
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.callAPI();
   }
 
   callAPI() {
-    this.setState({showSpinner: true});
+    this.setState({ showSpinner: true });
     let d = Object.keys(this.state.posts).map(s => {
       return axios
         .get(
@@ -51,9 +51,7 @@ class App extends Component {
               downs: ob.data["downs"],
               title: ob.data["title"],
               domain: ob.data["domain"],
-              image: ob.data.hasOwnProperty("preview")
-                ? ob.data.preview.images[0].source.url
-                : null,
+              image: ob.data["thumbnail"],
               comments: ob.data["num_comments"],
               sub: s
             };
@@ -70,36 +68,38 @@ class App extends Component {
       const posts = [...f].reduce((acc, curr, i) => {
         return { [labels[i]]: curr, ...acc };
       }, {});
-      this.setState({ posts, lastPostCount: this.state.postCount, showSpinner: false });
+      this.setState({
+        posts,
+        lastPostCount: this.state.postCount,
+        showSpinner: false
+      });
     });
   }
 
   render() {
     return (
       <div className="App">
-        <h1>Top Reddit Posts by Year and Sub*</h1>
-        <div>
-          <p>
+        <h1 className="main-title">Top Reddit Posts for [{this.state.timePeriod}] by Sub*</h1>
+        <div className="main">
+          <p className="methodology">
             * A submission's score is simply the number of upvotes minus the
             number of downvotes. If five users like the submission and three
             users don't it will have a score of 2." via reddit's faq
           </p>
-          <p>1. Select a timeperiod.</p>
+          <div className="instruct-1">1. Select a timeperiod.</div>
           <SelectableList
-            startIndex={"Month"}
-            onSelect={timePeriod => {
-              console.log("Select", timePeriod);
-            }}
+            startIndex={this.state.timePeriod}
+            onSelect={timePeriod => this.setState({timePeriod})}
           >
-            <ListButton>Hour</ListButton>
-            <ListButton>Day</ListButton>
-            <ListButton>Week</ListButton>
-            <ListButton>Month</ListButton>
-            <ListButton>Year</ListButton>
-            <ListButton>All</ListButton>
+            <ListButton>hour</ListButton>
+            <ListButton>day</ListButton>
+            <ListButton>week</ListButton>
+            <ListButton>month</ListButton>
+            <ListButton>year</ListButton>
+            <ListButton>all</ListButton>
           </SelectableList>
 
-          <p>2. Choose the number of posts per year.</p>
+          {/* <p>2. Choose the number of posts per year.</p>
           <ul>
             <li
               onClick={() => {
@@ -118,21 +118,19 @@ class App extends Component {
             >
               -
             </li>
-          </ul>
+          </ul> */}
 
-          <div
+          {/* <div
             className="updateButton"
             onClick={() => {
               this.callAPI();
             }}
           >
             Update
-          </div>
+          </div> */}
         </div>
-        <h4>Top Reddot Posts in Past {0}</h4>
-        <div className="viz-container">
+        <div className="viz-container clear">
           <div className="sub">
-            <h3>r/politics}</h3>
             <BubbleChart
               width={700}
               height={500}
@@ -142,10 +140,16 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
-            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
           </div>
           <div className="sub">
-            <h3>r/worldnews}</h3>
             <BubbleChart
               width={700}
               height={500}
@@ -155,10 +159,16 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
-            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
           </div>
           <div className="sub">
-            <h3>r/gaming}</h3>
             <BubbleChart
               width={700}
               height={500}
@@ -168,10 +178,16 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
-            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
           </div>
           <div className="sub">
-            <h3>r/movies}</h3>
             <BubbleChart
               width={700}
               height={500}
@@ -181,10 +197,16 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
-            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
           </div>
           <div className="sub">
-            <h3>r/technology}</h3>
             <BubbleChart
               width={700}
               height={500}
@@ -194,10 +216,16 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
-            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
           </div>
           <div className="sub">
-            <h3>r/science}</h3>
             <BubbleChart
               width={700}
               height={500}
@@ -207,9 +235,15 @@ class App extends Component {
                 console.log("bubble click");
               }}
             />
-            {this.state.showSpinner && <div className="spinner"><div></div><div></div><div></div><div></div></div>}
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
           </div>
-
         </div>
       </div>
     );

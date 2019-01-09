@@ -4,9 +4,9 @@ body {
   font-family: sans-serif;
 }
 
-p{
-    clear: both;
-    text-align: center;
+p {
+  clear: both;
+  text-align: center;
 }
 
 li {
@@ -22,68 +22,122 @@ ul {
   margin: auto auto;
 }
 
-
-
-.active{
-    color: red;
-}
-.notactive{
-    color: grey;
+.clear {
+  clear: both;
 }
 
-.sub{
-    height: 600px;
-    width: 80%;
-    margin: 10px;
-    position: relative;
+.main-title {
+  text-align: center;
 }
 
-.sub h3{
-    margin: 10px;
+.main {
+  text-align: center;
 }
 
-svg{
-    display: block;
-    width: 800px;
-    height: 500px;
-    margin: auto;
+.main p {
+  width: 800px;
+  margin: auto;
+}
+
+.methodology {
+  color: grey;
+  font-style: italic;
+}
+
+.main ul {
+  margin-top: 0.5em;
+}
+
+.instruct-1 {
+  margin-top: 1em;
+}
+
+.active {
+  color: red;
+}
+.notactive {
+  color: grey;
+}
+
+.sub {
+  height: 310px;
+  width: 800px;
+  margin: auto;
+  position: relative;
+}
+
+.sub h3 {
+  margin: 10px;
+}
+
+.sub-name {
+  position: relative;
+  top: -230px;
+}
+.svg-container {
+  position: relative;
+  width: 800px;
+  height: 300px;
+  margin: auto;
+}
+
+svg {
+  height: 100%;
+  width: 100%;
+}
+
+.tooltip {
+  width: 200px;
+  border: solid 1px black;
+  padding: 5px;
+  background-color: white;
+  border-radius: 3px;
+}
+
+.tooltip .title {
+  text-align: center;
+  /* font-size: 0.9em; */
+}
+
+.tooltip table {
+  margin: auto;
+  font-size: 0.7em;
 }
 
 .spinner {
-    display: inline-block;
-    position: absolute;
-    width: 64px;
-    height: 64px;
-    left: 50%;
-    bottom: 50%;
+  display: inline-block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  left: 50%;
+  bottom: 50%;
+}
+.spinner div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
+  margin: 6px;
+  border: 6px solid #f00;
+  border-radius: 50%;
+  animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #f00 transparent transparent transparent;
+}
+.spinner div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.spinner div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.spinner div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
   }
-  .spinner div {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 51px;
-    height: 51px;
-    margin: 6px;
-    border: 6px solid #f00;
-    border-radius: 50%;
-    animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #f00 transparent transparent transparent;
+  100% {
+    transform: rotate(360deg);
   }
-  .spinner div:nth-child(1) {
-    animation-delay: -0.45s;
-  }
-  .spinner div:nth-child(2) {
-    animation-delay: -0.3s;
-  }
-  .spinner div:nth-child(3) {
-    animation-delay: -0.15s;
-  }
-  @keyframes spinner {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
+}
