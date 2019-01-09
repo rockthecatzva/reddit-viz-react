@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import ToolTip from "./ToolTip";
 import { select, selectAll } from "d3-selection";
 import { axisBottom as d3AxisBottom } from "d3-axis";
-import { scaleLinear, scaleSequential } from "d3-scale";
+import { scaleLinear, scaleSequential, scaleTime } from "d3-scale";
 import { transition } from "d3-transition";
 import {interpolateBlues} from "d3"
 
@@ -63,7 +63,7 @@ export default class BubbleChart extends Component {
       const colorScale = scaleSequential(interpolateBlues)
         .domain([comments[0], comments[comments.length-1]])
 
-      const xScale = scaleLinear()
+      const xScale = scaleTime()
         .domain([dates[0], dates[dates.length - 1]])
         .range([0, width - (margin.left + margin.right)]);
 
