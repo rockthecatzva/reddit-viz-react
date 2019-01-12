@@ -27,8 +27,8 @@ export default class BubbleChart extends Component {
   };
   margin = {
     top: 15,
-    left: 15,
-    right: 15,
+    left: 30,
+    right: 60,
     bottom: 15
   };
 
@@ -61,6 +61,22 @@ export default class BubbleChart extends Component {
         "translate(" + this.margin.left + "," + this.margin.top + ")"
       );
 
+    this.legend = this.s.append("g").attr("transform", `translate(${0},${0})`);
+    this.legend
+      .append("text")
+      .attr("x", 85)
+      .attr("y", 10)
+      .attr("text-anchor", "middle")
+      .text("Legend");
+
+    this.legend
+      .append("line")
+      .attr("x1", 10)
+      .attr("y1", 14)
+      .attr("x2", 118)
+      .attr("y2", 14)
+      .attr("stroke", "#000");
+
     this.width = parseInt(this.s.style("width").replace("px", ""));
     this.height = parseInt(this.s.style("height").replace("px", ""));
   }
@@ -72,6 +88,15 @@ export default class BubbleChart extends Component {
 
     if (this.props.bubbleData !== prevProps.bubbleData) {
       // this.s.selectAll("g").remove();
+
+      if (this.props.bubbleData.length < 1) {
+        this.g
+          .selectAll("circle")
+          .transition()
+          .attr("r", 0)
+          .duration(800)
+          .remove();
+      }
 
       const dates = bubbleData
         .map(b => {
@@ -109,9 +134,45 @@ export default class BubbleChart extends Component {
         .ticks(timeMonths(dates[0], dates[dates.length - 1]).range)
         .tickSize(12, 0);
 
+      this.legend
+        .append("circle")
+        .attr("class", "legend-bubble")
+        .attr("r", rScale(scores[scores.length - 1]))
+        .attr("stroke", "#808080")
+        .attr("fill", "#fff")
+        // .attr("stroke-dasharray", 4)
+        .attr("cx", 28)
+        .attr("cy", 30);
+
+      this.legend
+        .append("circle")
+        .attr("class", "legend-bubble")
+        .attr("r", rScale(scores[0]))
+        .attr("stroke", "#808080")
+        .attr("fill", "#fff")
+        // .attr("stroke-dasharray", 4)
+        .attr("cx", 128)
+        .attr("cy", 30);
+
+      const hiScore = scores[scores.length - 1] / 1000;
+
+      this.legend
+        .append("text")
+        .attr("x", 28)
+        .attr("y", 33)
+        .attr("text-anchor", "middle")
+        .text(`${Math.round(scores[scores.length - 1] / 1000)}k`);
+
+      this.legend
+        .append("text")
+        .attr("x", 128)
+        .attr("y", 52)
+        .attr("text-anchor", "middle")
+        .text(`${Math.round(scores[0] / 1000)}k`);
+
       this.g
         .append("g")
-        .attr("class", "x axis")
+        .attr("class", "xaxis")
         .style("font-family", "mainfont")
         .attr("transform", "translate(0," + (height - 20) + ")")
         .call(axis);
@@ -124,7 +185,7 @@ export default class BubbleChart extends Component {
         .enter()
         .append("circle")
         .attr("class", "bubble")
-        .attr("r", d => rScale(d.score))
+        .attr("r", 0)
         .attr("cx", d => xScale(new Date(d.date)))
         .attr("cy", height / 2)
         .attr("fill", "#fff")
@@ -144,9 +205,10 @@ export default class BubbleChart extends Component {
         })
         .on("mouseleave", function(d, i, g) {
           select(g[i]).attr("stroke-width", 1);
-          // par.setState({showTooltip: false})
+          // par.setState({ showTooltip: false });
         })
         .transition()
+        .attr("r", d => rScale(d.score))
         .duration(_dur);
     }
   }
@@ -154,18 +216,19 @@ export default class BubbleChart extends Component {
   numberWithCommas(x) {
     x = x.toString();
     var pattern = /(-?\d+)(\d{3})/;
-    while (pattern.test(x))
-        x = x.replace(pattern, "$1,$2");
+    while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
     return x;
-}
+  }
 
   render() {
     const { selectedBubble } = this.state;
     const { bubbleData } = this.props;
-    const {_months}= this;
+    const { _months } = this;
 
     const date = new Date(selectedBubble.date);
-    const fdate = `${_months[date.getMonth()]}-${date.getDate()} ${date.getFullYear()}`;
+    const fdate = `${
+      _months[date.getMonth()]
+    }-${date.getDate()} ${date.getFullYear()}`;
     const sub = bubbleData.length > 0 ? bubbleData[0].sub : "loading...";
 
     return (
@@ -179,12 +242,17 @@ export default class BubbleChart extends Component {
             <div>{fdate}</div>
             <table>
               <tbody>
-                <tr><td>score</td><td>{this.numberWithCommas(selectedBubble.score)}</td></tr>
-                <tr><td>comments</td><td>{this.numberWithCommas(selectedBubble.comments)}</td></tr>
+                <tr>
+                  <td>score</td>
+                  <td>{this.numberWithCommas(selectedBubble.score)}</td>
+                </tr>
+                <tr>
+                  <td>comments</td>
+                  <td>{this.numberWithCommas(selectedBubble.comments)}</td>
+                </tr>
               </tbody>
             </table>
-            {/* <div>{selectedBubble.image}</div> */}
-            <img src={selectedBubble.image} />
+            {/* <img src={selectedBubble.image} /> */}
             <div />
             <a href={selectedBubble.url}>Link</a>
           </div>

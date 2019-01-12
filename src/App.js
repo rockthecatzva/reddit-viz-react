@@ -8,21 +8,22 @@ import axios from "axios";
 import BubbleChart from "./components/BubbleChart";
 
 class App extends Component {
+  _initPosts = {
+    politics: [],
+    worldnews: [],
+    gaming: [],
+    movies: [],
+    technology: [],
+    science: []
+  };
+
   state = {
     postCount: 50,
     timePeriod: "month",
     lastPostCount: 0,
     showSpinner: true,
-    posts: {
-      politics: [],
-      worldnews: [],
-      gaming: [],
-      movies: [],
-      technology: [],
-      science: []
-    },
+    posts: this._initPosts,
     selectedBubble: ""
-    // subs: ["politics", "worldnews", "gaming", "movies", "technology", "science"]
   };
 
   componentDidMount() {
@@ -30,7 +31,8 @@ class App extends Component {
   }
 
   callAPI() {
-    this.setState({ showSpinner: true });
+    this.setState({ showSpinner: true, posts: this._initPosts });
+
     let d = Object.keys(this.state.posts).map(s => {
       return axios
         .get(
@@ -76,10 +78,16 @@ class App extends Component {
     });
   }
 
+  onTimeSelect = timePeriod => {
+    this.setState({ timePeriod }, () => this.callAPI());
+  };
+
   render() {
     return (
       <div className="App">
-        <h1 className="main-title">Top Reddit Posts for [{this.state.timePeriod}] by Sub*</h1>
+        <h1 className="main-title">
+          Top Reddit Posts for [{this.state.timePeriod}] by Sub*
+        </h1>
         <div className="main">
           <p className="methodology">
             * A submission's score is simply the number of upvotes minus the
@@ -89,9 +97,8 @@ class App extends Component {
           <div className="instruct-1">1. Select a timeperiod.</div>
           <SelectableList
             startIndex={this.state.timePeriod}
-            onSelect={timePeriod => this.setState({timePeriod})}
+            onSelect={timePeriod => this.onTimeSelect(timePeriod)}
           >
-            <ListButton>hour</ListButton>
             <ListButton>day</ListButton>
             <ListButton>week</ListButton>
             <ListButton>month</ListButton>
@@ -244,6 +251,18 @@ class App extends Component {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="tooltip">
+          <p className="title">
+            Pelosi says Trump doesn't get shutdown's effect on workers: 'He
+            thinks maybe they could just ask their father for more money'
+          </p>
+          <hr />
+          <p>jan-9 2019 </p>
+          <p>score 61,283 </p>
+          <p>comments 5,121</p>
+          <a>Link</a>
         </div>
       </div>
     );
