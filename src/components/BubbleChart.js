@@ -28,7 +28,7 @@ export default class BubbleChart extends Component {
   margin = {
     top: 15,
     left: 30,
-    right: 60,
+    right: 120,
     bottom: 15
   };
 
@@ -36,6 +36,8 @@ export default class BubbleChart extends Component {
   _maxRad = 28;
   _dur = 1000;
   _minHeight = 20;
+  _minY = 100;
+  _maxY = 0.8;
   _months = [
     "jan",
     "feb",
@@ -61,29 +63,41 @@ export default class BubbleChart extends Component {
         "translate(" + this.margin.left + "," + this.margin.top + ")"
       );
 
-    this.legend = this.s.append("g").attr("transform", `translate(${0},${0})`);
-    this.legend
+    this.width = parseInt(this.s.style("width").replace("px", ""));
+    this.height = parseInt(this.s.style("height").replace("px", ""));
+
+    this.legend = this.s
+      .append("g")
+      .attr("transform", `translate(${this.width - 100},${0})`);
+    
+      this.legend
       .append("text")
-      .attr("x", 85)
+      .attr("x", 30)
       .attr("y", 10)
       .attr("text-anchor", "middle")
       .text("Legend");
 
-    this.legend
-      .append("line")
-      .attr("x1", 10)
-      .attr("y1", 14)
-      .attr("x2", 118)
-      .attr("y2", 14)
-      .attr("stroke", "#000");
-
-    this.width = parseInt(this.s.style("width").replace("px", ""));
-    this.height = parseInt(this.s.style("height").replace("px", ""));
+    // this.legend
+    //   .append("line")
+    //   .attr("x1", 10)
+    //   .attr("y1", 14)
+    //   .attr("x2", 118)
+    //   .attr("y2", 14)
+    //   .attr("stroke", "#000");
   }
 
   componentDidUpdate(prevProps) {
     const { bubbleData } = this.props;
-    const { margin, width, _ballSize, _dur, _minRad, _maxRad } = this;
+    const {
+      margin,
+      width,
+      _ballSize,
+      _dur,
+      _minRad,
+      _maxRad,
+      _minY,
+      _maxY
+    } = this;
     const height = this.height - (margin.top + margin.bottom);
 
     if (this.props.bubbleData !== prevProps.bubbleData) {
@@ -126,6 +140,10 @@ export default class BubbleChart extends Component {
         .domain([dates[0], dates[dates.length - 1]])
         .range([0, width - (margin.left + margin.right)]);
 
+      const yScale = scaleLinear()
+        .domain([comments[0], comments[comments.length - 1]])
+        .range([height * _maxY, _minY]);
+
       const rScale = scaleLinear()
         .domain([scores[0], scores[scores.length - 1]])
         .range([_minRad, _maxRad]);
@@ -139,20 +157,20 @@ export default class BubbleChart extends Component {
         .attr("class", "legend-bubble")
         .attr("r", rScale(scores[scores.length - 1]))
         .attr("stroke", "#808080")
-        .attr("fill", "#fff")
+        .attr("fill", "#f0f")
         // .attr("stroke-dasharray", 4)
-        .attr("cx", 28)
-        .attr("cy", 30);
+        .attr("cx", 30)
+        .attr("cy", 50);
 
       this.legend
         .append("circle")
         .attr("class", "legend-bubble")
         .attr("r", rScale(scores[0]))
         .attr("stroke", "#808080")
-        .attr("fill", "#fff")
+        .attr("fill", "#f0f")
         // .attr("stroke-dasharray", 4)
-        .attr("cx", 128)
-        .attr("cy", 30);
+        .attr("cx", 30)
+        .attr("cy", 120);
 
       const hiScore = scores[scores.length - 1] / 1000;
 
@@ -187,7 +205,7 @@ export default class BubbleChart extends Component {
         .attr("class", "bubble")
         .attr("r", 0)
         .attr("cx", d => xScale(new Date(d.date)))
-        .attr("cy", height / 2)
+        .attr("cy", height)
         .attr("fill", "#fff")
         .attr("stroke", "#000")
         .attr("stroke-width", 1)
@@ -209,6 +227,7 @@ export default class BubbleChart extends Component {
         })
         .transition()
         .attr("r", d => rScale(d.score))
+        .attr("cy", d => yScale(d.comments))
         .duration(_dur);
     }
   }
@@ -254,7 +273,7 @@ export default class BubbleChart extends Component {
             </table>
             {/* <img src={selectedBubble.image} /> */}
             <div />
-            <a href={selectedBubble.url}>Link</a>
+            <a target="_blank" href={selectedBubble.url}>Link</a>
           </div>
         )}
       </div>

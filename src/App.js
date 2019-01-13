@@ -14,7 +14,9 @@ class App extends Component {
     gaming: [],
     movies: [],
     technology: [],
-    science: []
+    science: [],
+    wallstreetbets: [],
+    the_donald: []
   };
 
   state = {
@@ -232,6 +234,7 @@ class App extends Component {
               </div>
             )}
           </div>
+          
           <div className="sub">
             <BubbleChart
               width={700}
@@ -251,6 +254,49 @@ class App extends Component {
               </div>
             )}
           </div>
+
+
+          <div className="sub">
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["wallstreetbets"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
+          </div>
+
+          <div className="sub">
+            <BubbleChart
+              width={700}
+              height={500}
+              selectedBubble={this.state.selectedBubble}
+              bubbleData={this.state.posts["the_donald"]}
+              clickHandler={() => {
+                console.log("bubble click");
+              }}
+            />
+            {this.state.showSpinner && (
+              <div className="spinner">
+                <div />
+                <div />
+                <div />
+                <div />
+              </div>
+            )}
+          </div>
+
+
         </div>
 
         <div className="tooltip">
