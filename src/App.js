@@ -11,12 +11,10 @@ class App extends Component {
   _initPosts = {
     politics: [],
     worldnews: [],
-    gaming: [],
-    movies: [],
-    technology: [],
-    science: [],
-    wallstreetbets: [],
-    the_donald: []
+    the_donald: [],
+    conservative: [],
+    alltheleft: [],
+    democrats: []
   };
 
   state = {
@@ -25,7 +23,9 @@ class App extends Component {
     lastPostCount: 0,
     showSpinner: true,
     posts: this._initPosts,
-    selectedBubble: ""
+    selectedBubble: "",
+    selectedSubs: Object.keys(this._initPosts),
+    selectedScale: "one per sub"
   };
 
   componentDidMount() {
@@ -96,9 +96,10 @@ class App extends Component {
             number of downvotes. If five users like the submission and three
             users don't it will have a score of 2." via reddit's faq
           </p>
-          <div className="instruct-1">1. Select a timeperiod.</div>
+          <div className="option-body">
+          <div className="instruct">1. Select a timeperiod.</div>
           <SelectableList
-            startIndex={this.state.timePeriod}
+            activeIndex={this.state.timePeriod}
             onSelect={timePeriod => this.onTimeSelect(timePeriod)}
           >
             <ListButton>day</ListButton>
@@ -108,43 +109,55 @@ class App extends Component {
             <ListButton>all</ListButton>
           </SelectableList>
 
-          {/* <p>2. Choose the number of posts per year.</p>
-          <ul>
-            <li
-              onClick={() => {
-                this.setState({ postCount: (this.state.postCount += 1) });
-              }}
-            >
-              +
-            </li>
-            <li>{this.state.postCount}</li>
-            <li
-              onClick={() => {
-                if (this.state.postCount > 0) {
-                  this.setState({ postCount: (this.state.postCount -= 1) });
-                }
-              }}
-            >
-              -
-            </li>
-          </ul> */}
+          <div className="instruct clear">Selected subs:</div>
 
-          {/* <div
-            className="updateButton"
-            onClick={() => {
-              this.callAPI();
+          <SelectableList
+            activeIndex={this.state.selectedSubs}
+            onSelect={timePeriod => {
+              console.log(timePeriod);
+              if (this.state.selectedSubs.indexOf(timePeriod) >= 0) {
+                const selectedSubs = this.state.selectedSubs.filter(
+                  s => s !== timePeriod
+                )
+                console.log(selectedSubs)
+                this.setState({
+                  selectedSubs
+                });
+              } else {
+                this.setState({
+                  selectedSubs: [timePeriod, ...this.state.selectedSubs]
+                });
+              }
             }}
           >
-            Update
-          </div> */}
+            <ListButton>politics</ListButton>
+            <ListButton>worldnews</ListButton>
+            <ListButton>the_donald</ListButton>
+            <ListButton>conservative</ListButton>
+            <ListButton>alltheleft</ListButton>
+            <ListButton>democrats</ListButton>
+          </SelectableList>
+          
+          <div className="instruct clear">Scale:</div>
+          <SelectableList 
+          activeIndex={this.state.selectedScale}
+          onSelect={scale=>{
+            if(scale!==this.state.selectedScale){
+              this.setState({selectedScale: scale})
+            }
+          }}
+          >
+            <ListButton>single </ListButton>
+            <ListButton>one per sub</ListButton>
+          </SelectableList>
+
+          </div>
         </div>
         <div className="viz-container clear">
           <div className="sub">
             <BubbleChart
-              width={700}
-              height={500}
               selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["politics"]}
+              bubbleData={this.state.posts}
               clickHandler={() => {
                 console.log("bubble click");
               }}
@@ -158,145 +171,6 @@ class App extends Component {
               </div>
             )}
           </div>
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["worldnews"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["gaming"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["movies"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["technology"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-          
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["science"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-
-
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["wallstreetbets"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-
-          <div className="sub">
-            <BubbleChart
-              width={700}
-              height={500}
-              selectedBubble={this.state.selectedBubble}
-              bubbleData={this.state.posts["the_donald"]}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
-            />
-            {this.state.showSpinner && (
-              <div className="spinner">
-                <div />
-                <div />
-                <div />
-                <div />
-              </div>
-            )}
-          </div>
-
-
         </div>
 
         <div className="tooltip">

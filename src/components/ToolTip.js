@@ -1,38 +1,85 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import {getMonthName} from './DrawingUtils'
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 export default class ToolTip extends Component {
-
-    render() {
-        const { title, link, score, date, ups, downs, domain, image, comments } = this.props;
-
-        const d = new Date(date);
-        const formatedDate = getMonthName(d.getMonth())
-            + " " + d.getDate() 
-            + ", " + d.getFullYear();
-        const renderScore = Math.round(score/1000) + "k";
-
-
-        return (
-            <div className="tool-tip">
-                <h4>{title}</h4>
-                <h6>{formatedDate}</h6>
-                <h6>{renderScore}</h6>
-                <h6>{domain}</h6>
-            </div>
-        )
+  state = {
+    toolStyle: {
+      position: "absolute",
+      top: "200px",
+      width: "300px",
+      left: "0px"
     }
+  };
+
+  _months = [
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec"
+  ];
+
+  numberWithCommas(x) {
+    x = x.toString();
+    var pattern = /(-?\d+)(\d{3})/;
+    while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
+    return x;
+  }
+
+  render() {
+    const { title, score, comments, url, sub } = this.props;
+    const { _months } = this;
+
+    const date = new Date(this.props.date);
+    const fdate = `${
+      _months[date.getMonth()]
+    }-${date.getDate()} ${date.getFullYear()}`;
+
+    return (
+      <div
+        style={this.state.toolStyle}
+        className={`tooltip ${
+          this.state.showTooltip === true ? "visible" : "hidden"
+        }`}
+      >
+        <div className="subname">r/{sub}</div>
+        <div className="title">{title}</div>
+        <hr />
+        <div>{fdate}</div>
+        <table>
+          <tbody>
+            <tr>
+              <td>score</td>
+              <td>{this.numberWithCommas(score)}</td>
+            </tr>
+            <tr>
+              <td>comments</td>
+              <td>{this.numberWithCommas(comments)}</td>
+            </tr>
+          </tbody>
+        </table>
+        {/* <img src={selectedBubble.image} /> */}
+        <div />
+        <a target="_blank" href={url}>
+          Link
+        </a>
+      </div>
+    );
+  }
 }
 
 ToolTip.propTypes = {
-    title: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired,
-    score: PropTypes.number.isRequired,
-    date: PropTypes.number.isRequired,
-    ups: PropTypes.number.isRequired,
-    downs: PropTypes.number.isRequired,
-    domain: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    comments: PropTypes.number.isRequired,
-}
+  url: PropTypes.string.isRequired,
+  comments: PropTypes.number.isRequired,
+  score: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  sub: PropTypes.string.isRequired,
+  date: PropTypes.number.isRequired
+};

@@ -49,9 +49,16 @@ ul {
   margin-top: 0.5em;
 }
 
-.instruct-1 {
+.instruct{
+  text-align: left;
   margin-top: 1em;
 }
+
+.option-body{
+  width: 300px;
+  margin: auto auto;
+}
+
 
 .active {
   color: red;
@@ -61,7 +68,7 @@ ul {
 }
 
 .sub {
-  height: 310px;
+  height: 800px;
   width: 800px;
   margin: auto;
   position: relative;
@@ -78,7 +85,7 @@ ul {
 .svg-container {
   position: relative;
   width: 800px;
-  height: 300px;
+  height: 500px;
   margin: auto;
 }
 
@@ -88,11 +95,21 @@ svg {
 }
 
 .tooltip {
-  width: 350px;
   border: solid 1px black;
   padding: 5px;
   background-color: white;
   border-radius: 3px;
+  opacity: 0;
+}
+
+ .hidden{
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+ .visible{
+  opacity: 1;
+  transition: opacity 1s;
 }
 
 .tooltip .title {
