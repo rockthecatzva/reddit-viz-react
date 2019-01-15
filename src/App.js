@@ -97,60 +97,57 @@ class App extends Component {
             users don't it will have a score of 2." via reddit's faq
           </p>
           <div className="option-body">
-          <div className="instruct">1. Select a timeperiod.</div>
-          <SelectableList
-            activeIndex={this.state.timePeriod}
-            onSelect={timePeriod => this.onTimeSelect(timePeriod)}
-          >
-            <ListButton>day</ListButton>
-            <ListButton>week</ListButton>
-            <ListButton>month</ListButton>
-            <ListButton>year</ListButton>
-            <ListButton>all</ListButton>
-          </SelectableList>
+            <div className="instruct">1. Select a timeperiod.</div>
+            <SelectableList
+              activeIndex={this.state.timePeriod}
+              onSelect={timePeriod => this.onTimeSelect(timePeriod)}
+            >
+              <ListButton>day</ListButton>
+              <ListButton>week</ListButton>
+              <ListButton>month</ListButton>
+              <ListButton>year</ListButton>
+              <ListButton>all</ListButton>
+            </SelectableList>
 
-          <div className="instruct clear">Selected subs:</div>
+            <div className="instruct clear">Selected subs:</div>
 
-          <SelectableList
-            activeIndex={this.state.selectedSubs}
-            onSelect={timePeriod => {
-              console.log(timePeriod);
-              if (this.state.selectedSubs.indexOf(timePeriod) >= 0) {
-                const selectedSubs = this.state.selectedSubs.filter(
-                  s => s !== timePeriod
-                )
-                console.log(selectedSubs)
-                this.setState({
-                  selectedSubs
-                });
-              } else {
-                this.setState({
-                  selectedSubs: [timePeriod, ...this.state.selectedSubs]
-                });
-              }
-            }}
-          >
-            <ListButton>politics</ListButton>
-            <ListButton>worldnews</ListButton>
-            <ListButton>the_donald</ListButton>
-            <ListButton>conservative</ListButton>
-            <ListButton>alltheleft</ListButton>
-            <ListButton>democrats</ListButton>
-          </SelectableList>
-          
-          <div className="instruct clear">Scale:</div>
-          <SelectableList 
-          activeIndex={this.state.selectedScale}
-          onSelect={scale=>{
-            if(scale!==this.state.selectedScale){
-              this.setState({selectedScale: scale})
-            }
-          }}
-          >
-            <ListButton>single </ListButton>
-            <ListButton>one per sub</ListButton>
-          </SelectableList>
+            <SelectableList
+              activeIndex={this.state.selectedSubs}
+              onSelect={timePeriod => {
+                if (this.state.selectedSubs.indexOf(timePeriod) >= 0) {
+                  const selectedSubs = this.state.selectedSubs.filter(
+                    s => s !== timePeriod
+                  );
+                  this.setState({
+                    selectedSubs
+                  });
+                } else {
+                  this.setState({
+                    selectedSubs: [timePeriod, ...this.state.selectedSubs]
+                  });
+                }
+              }}
+            >
+              <ListButton>politics</ListButton>
+              <ListButton>worldnews</ListButton>
+              <ListButton>the_donald</ListButton>
+              <ListButton>conservative</ListButton>
+              <ListButton>alltheleft</ListButton>
+              <ListButton>democrats</ListButton>
+            </SelectableList>
 
+            <div className="instruct clear">Scale:</div>
+            <SelectableList
+              activeIndex={this.state.selectedScale}
+              onSelect={scale => {
+                if (scale !== this.state.selectedScale) {
+                  this.setState({ selectedScale: scale });
+                }
+              }}
+            >
+              <ListButton>single </ListButton>
+              <ListButton>one per sub</ListButton>
+            </SelectableList>
           </div>
         </div>
         <div className="viz-container clear">
@@ -158,9 +155,6 @@ class App extends Component {
             <BubbleChart
               selectedBubble={this.state.selectedBubble}
               bubbleData={this.state.posts}
-              clickHandler={() => {
-                console.log("bubble click");
-              }}
             />
             {this.state.showSpinner && (
               <div className="spinner">
@@ -171,18 +165,6 @@ class App extends Component {
               </div>
             )}
           </div>
-        </div>
-
-        <div className="tooltip">
-          <p className="title">
-            Pelosi says Trump doesn't get shutdown's effect on workers: 'He
-            thinks maybe they could just ask their father for more money'
-          </p>
-          <hr />
-          <p>jan-9 2019 </p>
-          <p>score 61,283 </p>
-          <p>comments 5,121</p>
-          <a>Link</a>
         </div>
       </div>
     );

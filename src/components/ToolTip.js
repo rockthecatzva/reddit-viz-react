@@ -2,15 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 export default class ToolTip extends Component {
-  state = {
-    toolStyle: {
-      position: "absolute",
-      top: "200px",
-      width: "300px",
-      left: "0px"
-    }
-  };
-
   _months = [
     "jan",
     "feb",
@@ -34,27 +25,25 @@ export default class ToolTip extends Component {
   }
 
   render() {
-    const { title, score, comments, url, sub } = this.props;
+    const { title, score, comments, url, sub } = this.props.bubbleData;
     const { _months } = this;
 
-    const date = new Date(this.props.date);
+    const date = new Date(this.props.bubbleData.date);
     const fdate = `${
       _months[date.getMonth()]
     }-${date.getDate()} ${date.getFullYear()}`;
 
     return (
-      <div
-        style={this.state.toolStyle}
-        className={`tooltip ${
-          this.state.showTooltip === true ? "visible" : "hidden"
-        }`}
-      >
+      <div style={this.props.toolStyle} className={`tooltip visible`}>
         <div className="subname">r/{sub}</div>
         <div className="title">{title}</div>
         <hr />
-        <div>{fdate}</div>
         <table>
           <tbody>
+            <tr>
+              <td>date</td>
+              <td>{fdate}</td>
+            </tr>
             <tr>
               <td>score</td>
               <td>{this.numberWithCommas(score)}</td>
@@ -76,10 +65,6 @@ export default class ToolTip extends Component {
 }
 
 ToolTip.propTypes = {
-  url: PropTypes.string.isRequired,
-  comments: PropTypes.number.isRequired,
-  score: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
-  sub: PropTypes.string.isRequired,
-  date: PropTypes.number.isRequired
+  bubbleData: PropTypes.object.isRequired,
+  toolStyle: PropTypes.object.isRequired
 };

@@ -8,10 +8,17 @@ import { transition } from "d3-transition";
 import { interpolateBlues } from "d3";
 import { timeMonths } from "d3-time";
 
-
 export default class BubbleChart extends Component {
   state = {
     showTooltip: false,
+    // toolTop: "100px",
+    // toolLeft: "0px",
+    toolStyle: {
+      position: "absolute",
+      top: "100px",
+      left: "0px",
+      width: "300px"
+    },
     selectedBubble: {
       title: "TITLE",
       date: 1547002543,
@@ -53,7 +60,6 @@ export default class BubbleChart extends Component {
     alltheleft: "#263D42",
     democrats: "#0B3948"
   };
-  
 
   componentDidMount() {
     this.s = select(this.ref).select("svg");
@@ -187,7 +193,10 @@ export default class BubbleChart extends Component {
         .append("g")
         .attr("class", "xaxis")
         .style("font-family", "mainfont")
-        .attr("transform", "translate("+(margin.left)+"," + (this.height-20) + ")")
+        .attr(
+          "transform",
+          "translate(" + margin.left + "," + (this.height - 20) + ")"
+        )
         .call(axis);
 
       const par = this;
@@ -204,43 +213,49 @@ export default class BubbleChart extends Component {
         .attr("fill", d => _colorPairs[d.sub])
         .attr("stroke", "#000")
         .attr("stroke-width", 1)
-        .on("mouseenter", function(d, i, g) {
+        .on("click", (d, i, g)=> {
           const posX = g[i].getAttribute("cx") / width;
           const posY = g[i].getAttribute("cy") / height;
-          console.log(posY);
-          let left;
+          // console.log(posY);
+          // const {top, toolTop}= this.state.toolStyle;
+           let left = this.state.toolStyle.left;
+           let top = this.state.toolStyle.top;
+           let w = this.state.toolStyle.width;
+
           if (posX > 0.66) {
-            // left = "0px";
+            left = "0px";
             console.log("left");
           } else {
             if (posX < 0.33) {
-              // left = "400px";
+              left = "400px";
               console.log("right");
             } else {
               console.log("CENTER");
-              // left =
-              //   (width -
-              //     parseInt(par.state.toolStyle.width.replace("px", ""))) /
-              //     2 +
-              //   "px";
-              console.log(left);
+              left =
+                (width -
+                  parseInt(w.replace("px", ""))) /
+                  2 +
+                "px";
+              // console.log(left);
               //middle
             }
           }
+          console.log(left)
 
           select(g[i]).attr("stroke-width", 3);
-          par.setState({
+          this.setState({
             showTooltip: true,
             selectedBubble: d,
-            // toolStyle: {
-            //   ...par.state.toolStyle,
-            //   left
-            // }
+            toolStyle:{
+              ...this.state.toolStyle,
+              left,
+              top
+            }
           });
         })
         .on("mouseleave", function(d, i, g) {
           select(g[i]).attr("stroke-width", 1);
-          par.setState({ showTooltip: false });
+          // par.setState({ showTooltip: false });
         })
         .transition()
         .attr("r", d => rScale(d.score))
@@ -249,27 +264,27 @@ export default class BubbleChart extends Component {
     }
   }
 
-  
-
   render() {
     const { selectedBubble } = this.state;
     const { bubbleData } = this.props;
-    
 
-    
     // const sub = bubbleData.length > 0 ? bubbleData[0].sub : "loading...";
 
     return (
       <div className="svg-container" ref={ref => (this.ref = ref)}>
         <svg />
-        <ToolTip 
-         url={this.state.selectedBubble.url}
-         comments={this.state.selectedBubble.comments}
-         score={this.state.selectedBubble.score}
-         title={this.state.selectedBubble.title}
-         sub={this.state.selectedBubble.sub}
-         date={this.state.selectedBubble.date}
-         />
+        {this.state.showTooltip && (
+          <ToolTip
+            bubbleData={this.state.selectedBubble}
+            toolStyle={this.state.toolStyle}
+            // url={this.state.selectedBubble.url}
+            // comments={this.state.selectedBubble.comments}
+            // score={this.state.selectedBubble.score}
+            // title={this.state.selectedBubble.title}
+            // sub={this.state.selectedBubble.sub}
+            // date={this.state.selectedBubble.date}
+          />
+        )}
       </div>
     );
   }
