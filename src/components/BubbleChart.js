@@ -111,7 +111,10 @@ export default class BubbleChart extends Component {
     const height = this.height - (margin.top + margin.bottom);
     const width = this.width - (margin.left + margin.right);
 
-    if (this.props.bubbleData !== prevProps.bubbleData) {
+    if (
+      this.props.bubbleData !== prevProps.bubbleData ||
+      this.props.singleScale !== prevProps.singleScale
+    ) {
       // this.s.selectAll("g").remove();
 
       this.g
@@ -122,14 +125,15 @@ export default class BubbleChart extends Component {
         .remove();
 
       const subs = Object.keys(bubbleData);
-      const propExtractor = prop =>
-        subs
-          .map(sub => bubbleData[sub].map(post => post[prop]))
-          .reduce((acc, curr) => [...curr, ...acc])
-          .sort((a, b) => (a < b ? -1 : 1));
-      const dates = propExtractor("date");
-      const comments = propExtractor("comments");
-      const scores = propExtractor("score");
+      const propExtractor = (prop, selectedSub = "") =>
+        selectedSub === ""
+          ? subs
+              .map(sub => bubbleData[sub].map(post => post[prop]))
+              .reduce((acc, curr) => [...curr, ...acc])
+              .sort((a, b) => (a < b ? -1 : 1))
+          : bubbleData[selectedSub]
+              .map(post => post[prop])
+              .sort((a, b) => (a < b ? -1 : 1));
 
       //SHOULD I JUST TRANSFORM bubbleData to an array in App.js instead???
 
@@ -137,21 +141,148 @@ export default class BubbleChart extends Component {
         .map(sub => bubbleData[sub])
         .reduce((acc, curr) => [...curr, ...acc]);
 
-      const xScale = scaleTime()
-        .domain([dates[0], dates[dates.length - 1]])
-        .range([0, width - (margin.left + margin.right)]);
+      const clickHandler = (d, i, g) => {
+        const posX = g[i].getAttribute("cx") / width;
+        const posY = g[i].getAttribute("cy") / height;
+        // console.log(posY);
+        // const {top, toolTop}= this.state.toolStyle;
+        let left = this.state.toolStyle.left;
+        let top = this.state.toolStyle.top;
+        let w = this.state.toolStyle.width;
 
-      const yScale = scaleLinear()
-        .domain([comments[0], comments[comments.length - 1]])
-        .range([height * _maxY, _minY]);
+        if (posX > 0.66) {
+          left = "0px";
+          console.log("left");
+        } else {
+          if (posX < 0.33) {
+            left = "400px";
+            console.log("right");
+          } else {
+            console.log("CENTER");
+            left = (width - parseInt(w.replace("px", ""))) / 2 + "px";
+            // console.log(left);
+            //middle
+          }
+        }
+        console.log(left);
 
-      const rScale = scaleLinear()
-        .domain([scores[0], scores[scores.length - 1]])
-        .range([_minRad, _maxRad]);
+        select(g[i]).attr("stroke-width", 3);
+        this.setState({
+          showTooltip: true,
+          selectedBubble: d,
+          toolStyle: {
+            ...this.state.toolStyle,
+            left,
+            top
+          }
+        });
+      };
 
-      const axis = axisBottom(xScale)
-        .ticks(timeMonths(dates[0], dates[dates.length - 1]).range)
-        .tickSize(12, 0);
+      if (this.props.singleScale) {
+        const dates = propExtractor("date");
+        const comments = propExtractor("comments");
+        const scores = propExtractor("score");
+
+        const xScale = scaleTime()
+          .domain([dates[0], dates[dates.length - 1]])
+          .range([0, width - (margin.left + margin.right)]);
+
+        const yScale = scaleLinear()
+          .domain([comments[0], comments[comments.length - 1]])
+          .range([height * _maxY, _minY]);
+
+        const rScale = scaleLinear()
+          .domain([scores[0], scores[scores.length - 1]])
+          .range([_minRad, _maxRad]);
+
+        const xAxis = axisBottom(xScale)
+          .ticks(timeMonths(dates[0], dates[dates.length - 1]).range)
+          .tickSize(12, 0);
+
+        this.s
+          .append("g")
+          .attr("class", "xaxis")
+          .style("font-family", "mainfont")
+          .attr(
+            "transform",
+            "translate(" + margin.left + "," + (this.height - 20) + ")"
+          )
+          .call(xAxis);
+
+        this.g
+          .selectAll("bubbles")
+          .data(bubbleSet)
+          .enter()
+          .append("circle")
+          .attr("class", d => `bubble group-${subs.indexOf(d.sub)}`)
+          .attr("r", 0)
+          .attr("cx", d => xScale(new Date(d.date)))
+          .attr("cy", height)
+          .attr("fill", d => _colorPairs[d.sub])
+          .attr("stroke", "#000")
+          .attr("stroke-width", 1)
+          .on("click", clickHandler)
+          .on("mouseleave", function(d, i, g) {
+            select(g[i]).attr("stroke-width", 1);
+            // par.setState({ showTooltip: false });
+          })
+          .transition()
+          .attr("r", d => rScale(d.score))
+          .attr("cy", d => yScale(d.comments))
+          .duration(_dur);
+      } else {
+        //MULTI SCALE
+        const scales = subs.map(s => {
+          const dates = propExtractor("date", s).map(d => {
+            return new Date(d);
+          });
+          const comments = propExtractor("comments", s);
+          const scores = propExtractor("score", s);
+
+          const xScale = scaleTime()
+            .domain([dates[0], dates[dates.length - 1]])
+            .range([0, width - (margin.left + margin.right)]);
+
+          const yScale = scaleLinear()
+            .domain([comments[0], comments[comments.length - 1]])
+            .range([height * _maxY, _minY]);
+
+          const rScale = scaleLinear()
+            .domain([scores[0], scores[scores.length - 1]])
+            .range([_minRad, _maxRad]);
+
+          return { sub: s, xScale, yScale, rScale };
+        });
+
+        this.g
+          .selectAll("bubbles")
+          .data(bubbleSet)
+          .enter()
+          .append("circle")
+          // .attr("class", d => `bubble group-${subs.indexOf(d.sub)}`)
+          .attr("r", 0)
+          .attr("cx", d => {
+            const date = new Date(d.date);
+            // console.log(d, scales.find(s => s.sub === d.sub));
+            return scales.find(s => s.sub === d.sub).xScale(date);
+          })
+          .attr("cy", height)
+          .attr("fill", d => _colorPairs[d.sub])
+          .attr("stroke", "#000")
+          .attr("stroke-width", 1)
+          .on("click", clickHandler)
+          .on("mouseleave", function(d, i, g) {
+            select(g[i]).attr("stroke-width", 1);
+            // par.setState({ showTooltip: false });
+          })
+          .transition()
+          .attr("r", d => {
+            // console.log(d.score, scales.find(s => s.sub === d.sub).rScale(d.score) )
+            return scales.find(s => s.sub === d.sub).rScale(d.score);
+          })
+          .attr("cy", d => scales.find(s => s.sub === d.sub).yScale(d.comments))
+          .duration(_dur);
+      }
 
       // this.legend
       //   .append("circle")
@@ -188,87 +319,13 @@ export default class BubbleChart extends Component {
       //   .attr("y", 52)
       //   .attr("text-anchor", "middle")
       //   .text(`${Math.round(scores[0] / 1000)}k`);
-
-      this.s
-        .append("g")
-        .attr("class", "xaxis")
-        .style("font-family", "mainfont")
-        .attr(
-          "transform",
-          "translate(" + margin.left + "," + (this.height - 20) + ")"
-        )
-        .call(axis);
-
-      const par = this;
-
-      this.g
-        .selectAll("bubbles")
-        .data(bubbleSet)
-        .enter()
-        .append("circle")
-        .attr("class", d => `bubble group-${subs.indexOf(d.sub)}`)
-        .attr("r", 0)
-        .attr("cx", d => xScale(new Date(d.date)))
-        .attr("cy", height)
-        .attr("fill", d => _colorPairs[d.sub])
-        .attr("stroke", "#000")
-        .attr("stroke-width", 1)
-        .on("click", (d, i, g)=> {
-          const posX = g[i].getAttribute("cx") / width;
-          const posY = g[i].getAttribute("cy") / height;
-          // console.log(posY);
-          // const {top, toolTop}= this.state.toolStyle;
-           let left = this.state.toolStyle.left;
-           let top = this.state.toolStyle.top;
-           let w = this.state.toolStyle.width;
-
-          if (posX > 0.66) {
-            left = "0px";
-            console.log("left");
-          } else {
-            if (posX < 0.33) {
-              left = "400px";
-              console.log("right");
-            } else {
-              console.log("CENTER");
-              left =
-                (width -
-                  parseInt(w.replace("px", ""))) /
-                  2 +
-                "px";
-              // console.log(left);
-              //middle
-            }
-          }
-          console.log(left)
-
-          select(g[i]).attr("stroke-width", 3);
-          this.setState({
-            showTooltip: true,
-            selectedBubble: d,
-            toolStyle:{
-              ...this.state.toolStyle,
-              left,
-              top
-            }
-          });
-        })
-        .on("mouseleave", function(d, i, g) {
-          select(g[i]).attr("stroke-width", 1);
-          // par.setState({ showTooltip: false });
-        })
-        .transition()
-        .attr("r", d => rScale(d.score))
-        .attr("cy", d => yScale(d.comments))
-        .duration(_dur);
     }
   }
 
   render() {
     const { selectedBubble } = this.state;
     const { bubbleData } = this.props;
-
-    // const sub = bubbleData.length > 0 ? bubbleData[0].sub : "loading...";
+    console.log(bubbleData)
 
     return (
       <div className="svg-container" ref={ref => (this.ref = ref)}>
@@ -277,12 +334,6 @@ export default class BubbleChart extends Component {
           <ToolTip
             bubbleData={this.state.selectedBubble}
             toolStyle={this.state.toolStyle}
-            // url={this.state.selectedBubble.url}
-            // comments={this.state.selectedBubble.comments}
-            // score={this.state.selectedBubble.score}
-            // title={this.state.selectedBubble.title}
-            // sub={this.state.selectedBubble.sub}
-            // date={this.state.selectedBubble.date}
           />
         )}
       </div>
@@ -292,6 +343,6 @@ export default class BubbleChart extends Component {
 
 BubbleChart.propTypes = {
   bubbleData: PropTypes.object.isRequired,
-  clickHandler: PropTypes.func.isRequired,
-  selectedBubble: PropTypes.string.isRequired
+  selectedBubble: PropTypes.string.isRequired,
+  singleScale: PropTypes.bool.isRequired
 };

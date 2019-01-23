@@ -25,7 +25,7 @@ export default class ToolTip extends Component {
   }
 
   render() {
-    const { title, score, comments, url, sub } = this.props.bubbleData;
+    const { title, score, comments, url, sub, id } = this.props.bubbleData;
     const { _months } = this;
 
     const date = new Date(this.props.bubbleData.date);
@@ -36,6 +36,7 @@ export default class ToolTip extends Component {
     return (
       <div style={this.props.toolStyle} className={`tooltip visible`}>
         <div className="subname">r/{sub}</div>
+
         <div className="title">{title}</div>
         <hr />
         <table>
@@ -50,14 +51,29 @@ export default class ToolTip extends Component {
             </tr>
             <tr>
               <td>comments</td>
-              <td>{this.numberWithCommas(comments)}</td>
+              <td>
+                {" "}
+                <a
+                  target="_blank"
+                  href={`https://www.reddit.com/r/${sub}/comments/${id}/`}
+                >
+                  {this.numberWithCommas(comments)}
+                </a>{" "}
+              </td>
             </tr>
           </tbody>
         </table>
         {/* <img src={selectedBubble.image} /> */}
         <div />
         <a target="_blank" href={url}>
-          Link
+          Article
+        </a>
+        |
+        <a
+          target="_blank"
+          href={`https://www.reddit.com/r/${sub}/comments/${id}/`}
+        >
+          Comments
         </a>
       </div>
     );

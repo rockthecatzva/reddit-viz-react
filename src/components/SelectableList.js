@@ -16,7 +16,6 @@ export default class SelectableList extends Component {
       let isActive;
 
       if (typeof this.props.activeIndex === "object") {
-        console.log(this.props.activeIndex.indexOf(child.props.children));
         isActive =
           this.props.activeIndex.indexOf(child.props.children) >= 0
             ? true
@@ -24,7 +23,7 @@ export default class SelectableList extends Component {
       } else {
         isActive = child.props.children === this.props.activeIndex;
       }
-      console.log(this.props.activeIndex);
+      
       return React.cloneElement(child, {
         isActive,
         onSelect: () => {

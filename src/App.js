@@ -13,7 +13,6 @@ class App extends Component {
     worldnews: [],
     the_donald: [],
     conservative: [],
-    alltheleft: [],
     democrats: []
   };
 
@@ -25,7 +24,7 @@ class App extends Component {
     posts: this._initPosts,
     selectedBubble: "",
     selectedSubs: Object.keys(this._initPosts),
-    selectedScale: "one per sub"
+    selectedScale: "single"
   };
 
   componentDidMount() {
@@ -47,7 +46,9 @@ class App extends Component {
         )
         .then(resp => {
           return resp.data.map(ob => {
+             console.log(ob.data)
             return {
+              id: ob.data["id"],
               url: ob.data["url"],
               score: ob.data["score"],
               ups: ob.data["ups"],
@@ -132,7 +133,6 @@ class App extends Component {
               <ListButton>worldnews</ListButton>
               <ListButton>the_donald</ListButton>
               <ListButton>conservative</ListButton>
-              <ListButton>alltheleft</ListButton>
               <ListButton>democrats</ListButton>
             </SelectableList>
 
@@ -145,7 +145,7 @@ class App extends Component {
                 }
               }}
             >
-              <ListButton>single </ListButton>
+              <ListButton>single</ListButton>
               <ListButton>one per sub</ListButton>
             </SelectableList>
           </div>
@@ -155,6 +155,7 @@ class App extends Component {
             <BubbleChart
               selectedBubble={this.state.selectedBubble}
               bubbleData={this.state.posts}
+              singleScale={this.state.selectedScale==="single"}
             />
             {this.state.showSpinner && (
               <div className="spinner">
