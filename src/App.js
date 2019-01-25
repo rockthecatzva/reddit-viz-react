@@ -17,6 +17,7 @@ class App extends Component {
   };
 
   state = {
+    showTooltip: false,
     postCount: 50,
     timePeriod: "month",
     lastPostCount: 0,
@@ -37,7 +38,7 @@ class App extends Component {
     let d = Object.keys(this.state.posts).map(s => {
       return axios
         .get(
-          "http://rockthecatzva.com/reddit-apibounce-php/public/posts/top/" +
+          "https://rockthecatzva.com/reddit-apibounce-php/public/posts/top/" +
             s +
             "/" +
             this.state.timePeriod +
